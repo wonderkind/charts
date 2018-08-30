@@ -24,7 +24,7 @@ spec:
   - http:
   {{- end }}
       paths:
-        - path: {{ default "/" .path }}
+        - path: {{ default "/" .Values.ingress.path }}
           backend:
             serviceName: {{ template "rabbitmq.fullname" . }}
             servicePort: {{ .Values.rabbitmq.managerPort }}
