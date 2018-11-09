@@ -51,6 +51,7 @@ spec:
               mountPath: /dags
       {{- end }}
       containers:
+# {{ .Files.Get "mixins/_sidecar_gcs.yaml" | indent 8}}
         - name: {{ .Chart.Name }}-scheduler
           image: {{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy}}

@@ -226,10 +226,10 @@ ingress:
 persistence:
   ##
   ## enable persistance storage
-  enabled: true
+  enabled: false
   ##
   ## Existing claim to use
-  existingClaim: false
+  existingClaim: nil
   ##
   ## Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
@@ -238,7 +238,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   # storageClass: default
-  accessMode: ReadOnlyMany
+  accessMode: ReadWriteOnce
   ##
   ## Persistant storage size request
   size: 1Gi

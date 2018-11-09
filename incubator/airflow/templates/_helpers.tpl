@@ -49,12 +49,3 @@ Create a random string if the supplied key does not exist
 {{- randAlphaNum 10 | b64enc | quote -}}
 {{- end -}}
 {{- end -}}
-
-{{/*
-Create a random string if the supplied key does not exist
-*/}}
-{{- define "airflow.setupFuse" -}}
-{{- . | b64enc | quote -}}
-{{- randAlphaNum 10 | b64enc | quote -}}
-{{- end -}}
-{{- end -}}
