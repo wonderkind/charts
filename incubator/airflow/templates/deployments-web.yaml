@@ -51,6 +51,19 @@ spec:
               mountPath: /dags
       {{- end }}
       containers:
+        - name: {{.Chart.Name }}-gcs-sync
+          image: gcr.io/cloud-airflow-releaser/gcs-syncd:cloud_composer_service_2018-05-23-RC0
+          args: [{{ .Values.dags.path | replace "dags/" ""}}]
+          env:
+            - name: GCS_BUCKET
+            - value: {{ .Values.dags.gcs.bucket }}
+          volumeMounts:
+          {{- if .Values.persistence.enabled }}
+            - name: dags-data
+              mountPath: {{ .Values.dags.path }}
+          {{- else if .Values.dags.initContainer.enabled }}
+            - name: dags-data
+              mountPath: {{ .Values.dags.path }}
         - name: {{ .Chart.Name }}-web
           image: {{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy}}

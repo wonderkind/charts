@@ -26,10 +26,10 @@ airflow:
   image:
     ##
     ## docker-airflow image
-    repository: puckel/docker-airflow
+    repository: stibbons31/docker-airflow-dev
     ##
     ## image tag
-    tag: 1.9.0-4
+    tag: 2.0dev
     ##
     ## Image pull policy
     ## values: Always or IfNotPresent
@@ -49,7 +49,7 @@ airflow:
   ##
   ## If set to a value != -1, you will see your scheduler regularly restart. This is its normal
   ## behavior under these conditions.
-  schedulerNumRuns: "-1"
+  schedulerNumRuns: "1"
   ##
   ## Set schedulerDoPickle to toggle whether to have the scheduler
   ## attempt to pickle the DAG object to send over to the workers,
@@ -71,7 +71,9 @@ airflow:
   ##   config:
   ##     AIRFLOW__CORE__EXPOSE_CONFIG: "True"
   ##     HTTP_PROXY: "http://proxy.mycompany.com:123"
-  config: {}
+  config: {
+    # AIRFLOW__CORE_DAGS_FOLDER= /usr/local/airflow/gcs/dags
+  }
   ##
   ## Configure pod disruption budget for the scheduler
   podDisruptionBudget:
@@ -122,7 +124,7 @@ ingress:
   ## enable ingress
   ## Note: If you want to change url prefix for web ui or flower even if you do not use ingress,
   ## you can still change ingress.web.path and ingress.flower.path
-  enabled: false
+  enabled: true
   ##
   ## Configure the webserver endpoint
   web:
@@ -137,19 +139,19 @@ ingress:
     ##  - Healthcheck is at 'http://mycompany.com/airflow/health'
     ##  - api is at 'http://mycompany.com/airflow/api'
     ## NOTE: do NOT keep trailing slash. For root configuration, set and empty string
-    path: ""
+    path: "/airflow"
     ##
     ## hostname for the webserver
-    host: ""
+    host: "etl.k8s1.wonderkind.cloud"
     ##
     ## Annotations for the webserver
     ## Airflow webserver handles relative path completely, just let your load balancer give the HTTP
     ## header like the requested URL (no special configuration neeed)
     annotations:
       ##
+      
       ## Example for Traefik:
-      # traefik.frontend.rule.type: PathPrefix
-      # kubernetes.io/ingress.class: traefik
+      kubernetes.io/ingress.class: traefik
     tls:
       ## Set to "true" to enable TLS termination at the ingress
       enabled: false
@@ -168,7 +170,7 @@ ingress:
     ## request to have been be at the root.
     ## That's why we need a reverse proxy/load balancer that is able to strip the path
     ## NOTE: do NOT keep trailing slash. For root configuration, set and empty string
-    path: ""
+    path: "/airflow/flower"
     ##
     ## Configure the liveness path. Keep to "/" for Flower >= jan 2018.
     ## For previous version, enter the same path than in the 'path' key
@@ -176,7 +178,7 @@ ingress:
     livenessPath: /
     ##
     ## hostname for flower
-    host: ""
+    host: "etl.k8s1.wonderkind.cloud"
     ##
     ## Annotation for the Flower endpoint
     ##
@@ -208,9 +210,9 @@ ingress:
       ##
       ## NOTE: it is important here to have your reverse proxy strip the path/rewrite the URL
       ## Example for Traefik:
-      # traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
+      traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
       # traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
-      # kubernetes.io/ingress.class: traefik
+      kubernetes.io/ingress.class: traefik
     tls:
       ## Set to "true" to enable TLS termination at the ingress
       enabled: false
@@ -224,10 +226,10 @@ ingress:
 persistence:
   ##
   ## enable persistance storage
-  enabled: false
+  enabled: true
   ##
   ## Existing claim to use
-  existingClaim: nil
+  existingClaim: false
   ##
   ## Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
@@ -236,7 +238,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   # storageClass: default
-  accessMode: ReadWriteOnce
+  accessMode: ReadOnlyMany
   ##
   ## Persistant storage size request
   size: 1Gi
@@ -248,7 +250,7 @@ dags:
   ##
   ## mount path for persistent volume.
   ## Note that this location is referred to in airflow.cfg, so if you change it, you must update airflow.cfg accordingly.
-  path: /usr/local/airflow/dags
+  path: /usr/local/airflow/gcs/dags
   ##
   ## Set to True to prevent pickling DAGs from scheduler to workers
   doNotPickle: false
@@ -266,6 +268,8 @@ dags:
     enabled: false
     ## install requirements.txt dependencies automatically
     installRequirements: true
+  gcs:
+    bucket: "airflow_bi1id"
 
 ##
 ## Configuration values for the postgresql dependency.
