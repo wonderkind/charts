@@ -51,7 +51,7 @@ spec:
               mountPath: /dags
       {{- end }}
       containers:
-# {{ .Files.Get "mixins/_sidecar_gcs.yaml" | indent 8}}
+{{tpl (.Files.Get "mixins/_sidecar_gcs.yaml") . | indent 8}}
         - name: {{ .Chart.Name }}-scheduler
           image: {{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy}}
@@ -75,12 +75,9 @@ spec:
                   name: {{ template "airflow.fullname" . }}
                   key: redisPassword
           volumeMounts:
-          {{- if .Values.persistence.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- else if .Values.dags.initContainer.enabled }}
-            - name: dags-data
-              mountPath: {{ .Values.dags.path }}
+          {{- if .Values.dags.initContainer.enabled }}
             - name: scripts
               mountPath: /usr/local/scripts
           {{- end }}

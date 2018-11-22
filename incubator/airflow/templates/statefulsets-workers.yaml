@@ -59,6 +59,7 @@ spec:
             mountPath: /dags
       {{- end }}
       containers:
+{{tpl (.Files.Get "mixins/_sidecar_gcs.yaml") . | indent 8}}
         - name: {{ .Chart.Name }}-worker
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy }}
           image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
@@ -89,10 +90,9 @@ spec:
               mountPath: {{ $secretsDir }}/{{ . }}
               subPath: {{ . }}
           {{- end }}
-          {{- if .Values.persistence.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- else if .Values.dags.initContainer.enabled }}
+          {{- if .Values.dags.initContainer.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
             - name: scripts

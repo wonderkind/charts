@@ -210,8 +210,8 @@ ingress:
       ##
       ## NOTE: it is important here to have your reverse proxy strip the path/rewrite the URL
       ## Example for Traefik:
-      traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
-      # traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
+      # traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
+      traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
       kubernetes.io/ingress.class: traefik
     tls:
       ## Set to "true" to enable TLS termination at the ingress
@@ -250,7 +250,7 @@ dags:
   ##
   ## mount path for persistent volume.
   ## Note that this location is referred to in airflow.cfg, so if you change it, you must update airflow.cfg accordingly.
-  path: /usr/local/airflow/gcs/dags
+  path: /usr/local/airflow/dags
   ##
   ## Set to True to prevent pickling DAGs from scheduler to workers
   doNotPickle: false

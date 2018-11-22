@@ -1,9 +1,10 @@
 - name: {{.Chart.Name }}-gcs-sync
   image: gcr.io/cloud-airflow-releaser/gcs-syncd:cloud_composer_service_2018-05-23-RC0
-  args: [{{ .Values.dags.path | replace "dags/" ""}}]
+  # The passed argument must be AIRFLOW_HOME
+  args: ["/home/airflow"]
   env:
     - name: GCS_BUCKET
       value: {{ .Values.dags.gcs.bucket }}
   volumeMounts:
     - name: dags-data
-      mountPath: {{ .Values.dags.path | replace "dags/" "" }}
+      mountPath: "/home/airflow/dags"
