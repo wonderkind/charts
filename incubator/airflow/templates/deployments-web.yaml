@@ -1,5 +1,3 @@
-##  TODO: restore from master and put back all the changes in, mostly just the sidecar conatiner. 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -81,12 +79,12 @@ spec:
                   name: {{ template "airflow.fullname" . }}
                   key: redisPassword
           volumeMounts:
-            - name: dags-data
-              mountPath: {{ .Values.dags.path }}
           {{- if .Values.persistence.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- else if .Values.dags.initContainer.enabled }}
+          {{- else if or (.Values.dags.initContainer.enabled) (.Values.dags.gcs}}
+            - name: dags-data
+              mountPath: {{ .Values.dags.path }}
             - name: scripts
               mountPath: /usr/local/scripts
           {{- end }}

@@ -1,4 +1,5 @@
-apiVersion: apps/v1beta1
+{{- if .Values.workers.enabled -}}
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "airflow.fullname" . }}-flower
@@ -70,3 +71,4 @@ spec:
             timeoutSeconds: 1
             successThreshold: 1
             failureThreshold: 5
+{{- end }}

@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "airflow.fullname" . }}-scheduler
@@ -34,6 +34,7 @@ spec:
         - name: {{ .Values.airflow.image.pullSecret }}
       {{- end }}
       restartPolicy: Always
+      serviceAccountName: {{ template "airflow.serviceAccountName" . }}
       {{- if .Values.dags.initContainer.enabled }}
       initContainers:
         - name: git-clone
@@ -75,9 +76,12 @@ spec:
                   name: {{ template "airflow.fullname" . }}
                   key: redisPassword
           volumeMounts:
+          {{- if .Values.persistence.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- if .Values.dags.initContainer.enabled }}
+          {{- else if or (.Values.dags.initContainer.enabled) (.Values.dags.gcs) }}
+            - name: dags-data
+              mountPath: {{ .Values.dags.path }}
             - name: scripts
               mountPath: /usr/local/scripts
           {{- end }}

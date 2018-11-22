@@ -1,7 +1,8 @@
+{{- if .Values.workers.enabled -}}
 ## Workers are not in deployment, but in StatefulSet, to allow each worker expose a mini-server
 ## that only serve logs, that will be used by the web server.
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "airflow.fullname" . }}-worker
@@ -41,7 +42,7 @@ spec:
       {{- end }}
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
-      serviceAccountName: {{ .Values.workers.serviceAccountName }}
+      serviceAccountName: {{ template "airflow.serviceAccountName" . }}
       {{- if .Values.dags.initContainer.enabled }}
       initContainers:
         - name: git-clone
@@ -90,9 +91,10 @@ spec:
               mountPath: {{ $secretsDir }}/{{ . }}
               subPath: {{ . }}
           {{- end }}
+          {{- if .Values.persistence.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- if .Values.dags.initContainer.enabled }}
+          {{- else if .Values.dags.initContainer.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
             - name: scripts
@@ -135,7 +137,7 @@ spec:
         - name: dags-data
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-              claimName: {{ .Values.persistence.existingClaim | default (include "airflow.fullname" .) }}
+            claimName: {{ .Values.persistence.existingClaim | default (include "airflow.fullname" .) }}
         {{- else }}
           emptyDir: {}
         {{- end }}
@@ -149,3 +151,4 @@ spec:
             name: {{ template "airflow.fullname" . }}-git-clone
             defaultMode: 0755
         {{- end }}
+{{- end }}
