@@ -255,6 +255,8 @@ dags:
   ## Set to True to prevent pickling DAGs from scheduler to workers
   doNotPickle: false
   ##
+  ## install requirements.txt dependencies automatically
+  installRequirements: true
   ## Configure Git repository to fetch DAGs
   git:
     ##
@@ -266,8 +268,6 @@ dags:
   initContainer:
     ## Fetch the source code when the pods starts
     enabled: false
-    ## install requirements.txt dependencies automatically
-    installRequirements: true
   gcs:
     bucket: "airflow_bi1id"
 

@@ -91,10 +91,6 @@ spec:
               mountPath: {{ $secretsDir }}/{{ . }}
               subPath: {{ . }}
           {{- end }}
-          {{- if or (.Values.persistence.enabled)  (.Values.dags.gcs) }}
-            - name: dags-data
-              mountPath: {{ .Values.dags.path }}
-          {{- else if .Values.dags.initContainer.enabled }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
             - name: scripts
@@ -103,7 +99,7 @@ spec:
           args:
             - "bash"
             - "-c"
-          {{- if and ( .Values.dags.initContainer.enabled ) ( .Values.dags.initContainer.installRequirements ) }}
+          {{- if or ( .Values.dags.initContainer.enabled ) ( .Values.dags.installRequirements ) }}
             - >
               echo 'waiting 60s...' &&
               sleep 60 &&
@@ -141,6 +137,10 @@ spec:
         {{- else }}
           emptyDir: {}
         {{- end }}
+        - name: scripts
+          configMap:
+            name: {{ template "airflow.fullname" . }}-scripts
+            defaultMode: 0755
         {{- if .Values.dags.initContainer.enabled }}
         - name: scripts
           configMap:

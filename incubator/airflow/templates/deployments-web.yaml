@@ -79,19 +79,16 @@ spec:
                   name: {{ template "airflow.fullname" . }}
                   key: redisPassword
           volumeMounts:
-          {{- if or (.Values.persistence.enabled)  (.Values.dags.gcs) }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- else if (.Values.dags.initContainer.enabled)}}
-            - name: dags-data
-              mountPath: {{ .Values.dags.path }}
+          {{- if (Valies.dags.installRequirements) }}
             - name: scripts
               mountPath: /usr/local/scripts
           {{- end }}
           args:
             - "bash"
             - "-c"
-          {{- if and ( .Values.dags.initContainer.enabled ) ( .Values.dags.initContainer.installRequirements ) }}
+          {{- if and (or ( .Values.dags.gcs.bucket) ( .Values.dags.initContainer.enabled )) ( .Values.dags.installRequirements ) }}
             - >
               echo 'waiting 60s...' &&
               sleep 60 &&
@@ -121,20 +118,4 @@ spec:
             successThreshold: 1
             failureThreshold: 5
       volumes:
-        - name: dags-data
-        {{- if .Values.persistence.enabled }}
-          persistentVolumeClaim:
-              claimName: {{ .Values.persistence.existingClaim | default (include "airflow.fullname" .) }}
-        {{- else }}
-          emptyDir: {}
-        {{- end }}
-        {{- if .Values.dags.initContainer.enabled }}
-        - name: scripts
-          configMap:
-            name: {{ template "airflow.fullname" . }}-scripts
-            defaultMode: 0755
-        - name: git-clone
-          configMap:
-            name: {{ template "airflow.fullname" . }}-git-clone
-            defaultMode: 0755
-        {{- end }}
+{{tpl (.Files.Get "mixins/_volumes.yaml") . | indent 8}}
