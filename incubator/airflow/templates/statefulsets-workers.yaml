@@ -91,7 +91,7 @@ spec:
               mountPath: {{ $secretsDir }}/{{ . }}
               subPath: {{ . }}
           {{- end }}
-          {{- if .Values.persistence.enabled }}
+          {{- if or (.Values.persistence.enabled)  (.Values.dags.gcs) }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
           {{- else if .Values.dags.initContainer.enabled }}

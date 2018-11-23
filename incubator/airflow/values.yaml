@@ -53,7 +53,7 @@ airflow:
   ##
   ## If set to a value != -1, you will see your scheduler regularly restart. This is its normal
   ## behavior under these conditions.
-  schedulerNumRuns: "-1"
+  schedulerNumRuns: "1"
   ##
   ## Set schedulerDoPickle to toggle whether to have the scheduler
   ## attempt to pickle the DAG object to send over to the workers,
@@ -84,7 +84,7 @@ airflow:
 ##
 ## Workers configuration
 workers:
-  enabled: false
+  enabled: true
   ##
   ## Number of workers pod to launch
   replicas: 1
@@ -210,7 +210,7 @@ ingress:
       ##
       ## NOTE: it is important here to have your reverse proxy strip the path/rewrite the URL
       ## Example for Traefik:
-       traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
+      traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
 #      traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
       kubernetes.io/ingress.class: traefik
     tls:

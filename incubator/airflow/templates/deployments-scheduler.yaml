@@ -76,10 +76,10 @@ spec:
                   name: {{ template "airflow.fullname" . }}
                   key: redisPassword
           volumeMounts:
-          {{- if .Values.persistence.enabled }}
+          {{- if or (.Values.persistence.enabled)  (.Values.dags.gcs) }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- else if or (.Values.dags.initContainer.enabled) (.Values.dags.gcs) }}
+          {{- else if (.Values.dags.initContainer.enabled) }}
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
             - name: scripts
