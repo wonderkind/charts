@@ -95,7 +95,6 @@ spec:
               mountPath: {{ .Values.dags.path }}
             - name: scripts
               mountPath: /usr/local/scripts
-          {{- end }}
           args:
             - "bash"
             - "-c"

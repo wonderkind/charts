@@ -81,7 +81,7 @@ spec:
           volumeMounts:
             - name: dags-data
               mountPath: {{ .Values.dags.path }}
-          {{- if (Valies.dags.installRequirements) }}
+          {{- if (.Values.dags.installRequirements) }}
             - name: scripts
               mountPath: /usr/local/scripts
           {{- end }}

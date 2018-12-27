@@ -9,7 +9,7 @@ airflow:
   ## Generate fernetKey with:
   ##    python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
   ## fernetKey: ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
-  fernetKey: ""
+  fernetKey: -hk7sQcxsgQOE02ygodl2iIgjQhuyn4p23hDHiq6jjI=
   service:
     type: ClusterIP
   ##
@@ -53,7 +53,7 @@ airflow:
   ##
   ## If set to a value != -1, you will see your scheduler regularly restart. This is its normal
   ## behavior under these conditions.
-  schedulerNumRuns: "1"
+  schedulerNumRuns: "-1"
   ##
   ## Set schedulerDoPickle to toggle whether to have the scheduler
   ## attempt to pickle the DAG object to send over to the workers,
@@ -108,13 +108,13 @@ workers:
   celery:
     ##
     ## number of parallel celery tasks per worker
-    instances: 1
+    instances: 3
   ##
   ## Directory in which to mount secrets on worker nodes.
   secretsDir: /var/airflow/secrets
   ##
   ## Secrets which will be mounted as a file at `secretsDir/<secret name>`.
-  secrets: []
+  secrets: [airflow-service-account]
 
 
 ##
@@ -210,8 +210,8 @@ ingress:
       ##
       ## NOTE: it is important here to have your reverse proxy strip the path/rewrite the URL
       ## Example for Traefik:
-      traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
-#      traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
+#      traefik.frontend.rule.type: PathPrefix       ## Flower >= Jan 2018
+      traefik.frontend.rule.type: PathPrefixStrip  ## Flower < Jan 2018
       kubernetes.io/ingress.class: traefik
     tls:
       ## Set to "true" to enable TLS termination at the ingress
@@ -286,7 +286,7 @@ serviceAccount:
   create: true
   ## The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the fullname template
-  name:
+  name: etl
 
 ##
 ## Configuration values for the postgresql dependency.

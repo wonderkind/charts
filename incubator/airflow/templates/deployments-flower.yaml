@@ -35,6 +35,7 @@ spec:
       {{- end }}
       restartPolicy: Always
       containers:
+{{tpl (.Files.Get "mixins/_sidecar_gcs.yaml") . | indent 8}}
         - name: {{ .Chart.Name }}-flower
           image: {{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}
           imagePullPolicy: {{ .Values.airflow.image.pullPolicy }}
@@ -71,4 +72,7 @@ spec:
             timeoutSeconds: 1
             successThreshold: 1
             failureThreshold: 5
+      volumes:
+{{tpl (.Files.Get "mixins/_volumes.yaml") . | indent 8}}
+
 {{- end }}
