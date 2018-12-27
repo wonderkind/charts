@@ -114,7 +114,7 @@ workers:
   secretsDir: /var/airflow/secrets
   ##
   ## Secrets which will be mounted as a file at `secretsDir/<secret name>`.
-  secrets: [airflow-service-account]
+  secrets: []
 
 
 ##
