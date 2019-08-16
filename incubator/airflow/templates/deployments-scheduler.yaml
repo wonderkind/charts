@@ -87,8 +87,8 @@ spec:
             - "-c"
           {{- if and (or ( .Values.dags.gcs.bucket) ( .Values.dags.initContainer.enabled )) ( .Values.dags.installRequirements ) }}
             - >
-              echo 'waiting 10s...' &&
-              sleep 10 &&
+              echo 'waiting 60s...' &&
+              sleep 60 &&
               echo 'installing requirements...' &&
               mkdir -p /usr/local/airflow/.local/bin &&
               export PATH=/usr/local/airflow/.local/bin:$PATH &&
@@ -99,8 +99,8 @@ spec:
               airflow scheduler -n {{ .Values.airflow.schedulerNumRuns }}
           {{- else }}
             - >
-              echo 'waiting 10s...' &&
-              sleep 10 &&
+              echo 'waiting 60s...' &&
+              sleep 60 &&
               mkdir -p /usr/local/airflow/.local/bin &&
               export PATH=/usr/local/airflow/.local/bin:$PATH &&
               echo "executing initdb" &&
